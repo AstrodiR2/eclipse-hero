@@ -25,8 +25,9 @@ const T_RIGHT_EDGE   = 5.00;   // правый край экрана
 const T_NEUTRAL      = (T_CENTER_LEFT + T_CENTER_RIGHT) / 2; // ≈ 2.085s
 
 // ── Определяем устройство ───────────────────────────────────────────────────
-// Мобильным считаем узкий экран ИЛИ «грубый» указатель (палец).
-const isMobile = window.matchMedia('(max-width: 820px), (pointer: coarse)').matches;
+// Мобильным считаем узкий экран (< 768px по ТЗ) ИЛИ «грубый» указатель (палец).
+// Под это подпадает Samsung Galaxy A26 (CSS-ширина ≈ 411px, pointer: coarse).
+const isMobile = window.innerWidth < 768 || window.matchMedia('(pointer: coarse)').matches;
 
 // ── Источники видео ─────────────────────────────────────────────────────────
 // Десктоп — 1080p all-intra; мобильные — лёгкая 720p all-intra версия,

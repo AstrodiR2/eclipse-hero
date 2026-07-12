@@ -1,41 +1,42 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#ffffff" />
-  <title>ECLIPSE — совершенство под любым углом</title>
-  <meta name="description" content="Интерактивный флагман. Двигайте курсор и рассмотрите каждую грань в реальном времени." />
+  <title>prmpt® — Archive Collection 001 · Obsidian</title>
+  <meta name="description" content="prmpt® Archive Collection 001 — Obsidian. A matte-black object in motion. Move to explore every facet." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="style.css" />
 </head>
-<body>
-  <!-- ───────────────────────── Navbar ───────────────────────── -->
-  <header class="navbar">
-    <a class="brand" href="#top" aria-label="ECLIPSE — на главную">
-      <span class="brand__dot" aria-hidden="true"></span>
-      ECLIPSE
-    </a>
-    <nav class="nav-links" aria-label="Основная навигация">
-      <a href="#features">Возможности</a>
-      <a href="#design">Дизайн</a>
-      <a href="#specs">Характеристики</a>
+<body id="top">
+  <!-- ───────────────────────── Top bar ───────────────────────── -->
+  <header class="topbar">
+    <a class="wordmark" href="#top" aria-label="prmpt, home">prmpt<sup class="wordmark__r">®</sup></a>
+
+    <nav class="topnav" aria-label="Primary">
+      <a class="navlink topnav__inline" href="#specs">About</a>
+      <a class="navlink topnav__inline navlink--cart" href="#cart">
+        Cart <span class="cart-count" aria-label="items in cart">(0)</span>
+      </a>
+      <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu">
+        <span class="menu-toggle__box" aria-hidden="true">
+          <span class="menu-toggle__line"></span>
+          <span class="menu-toggle__line"></span>
+          <span class="menu-toggle__line"></span>
+        </span>
+      </button>
     </nav>
-    <a class="btn btn--pill" href="#buy">Купить</a>
   </header>
 
   <!-- ───────────────────────── Hero ───────────────────────── -->
-  <main id="top">
-    <section class="hero" aria-label="Интерактивный обзор устройства">
-      <!--
-        Одно видео. Оно НЕ воспроизводится само — его currentTime
-        жёстко привязан к позиции курсора (см. script.js).
-      -->
-      <!-- src подставляет script.js под устройство (desktop 1080p / mobile 720p) -->
+  <main>
+    <section class="hero" aria-label="Obsidian — interactive object">
+      <!-- src подставляет script.js под устройство. Механика скраббинга не менялась. -->
       <video
         id="hero-video"
         class="hero__video"
@@ -46,79 +47,91 @@
         aria-hidden="true"
       ></video>
 
-      <!-- Текстовый слой поверх белого фона видео -->
+      <!-- Editorial content layer -->
       <div class="hero__content">
-        <p class="hero__eyebrow">Новый флагман · 2026</p>
-        <h1 class="hero__title">
-          Совершенство<br />под любым углом
-        </h1>
-        <p class="hero__subtitle">
-          Одно устройство. Бесконечно граней. Двигайте курсор&nbsp;— и рассмотрите
-          каждую деталь так, будто оно у вас в руке.
+        <p class="eyebrow">
+          <span>Archive Collection</span>
+          <span class="eyebrow__rule" aria-hidden="true"></span>
+          <span class="eyebrow__idx">Nº 001</span>
         </p>
+
+        <h1 class="drop-title">Obsidian,<br /><em>in&nbsp;motion.</em></h1>
+
+        <p class="drop-desc">
+          A study in matte black. One object, every facet —
+          rendered in real time as you move.
+        </p>
+
+        <div class="price-row">
+          <span class="price">€&thinsp;1,290</span>
+          <span class="price__meta">Edition of 500</span>
+        </div>
+
         <div class="hero__actions">
-          <a class="btn btn--solid" href="#buy">Заказать</a>
-          <a class="btn btn--ghost" href="#features">Смотреть обзор</a>
+          <button class="btn-fill" type="button" id="reserve">
+            <span>Add to Archive</span>
+          </button>
+          <a class="btn-underline" href="#specs">
+            Specifications <span class="btn-underline__arrow" aria-hidden="true">→</span>
+          </a>
         </div>
       </div>
 
-      <!-- Подсказка «двигай курсор» -->
+      <!-- Interaction cue (desktop) -->
       <div class="hero__hint" aria-hidden="true">
-        <span class="hero__hint-track">
-          <span class="hero__hint-thumb"></span>
-        </span>
-        <span class="hero__hint-label">Двигайте&nbsp;курсор</span>
+        <span class="hero__hint-label">Move to rotate</span>
+        <span class="hero__hint-line"><span class="hero__hint-thumb"></span></span>
       </div>
     </section>
 
-    <!-- ─────────────────────── Features ─────────────────────── -->
-    <section id="features" class="features">
-      <h2 class="section-title">Продумано до&nbsp;последнего&nbsp;пикселя</h2>
-      <div class="feature-grid">
-        <article class="feature">
-          <span class="feature__num">01</span>
-          <h3>Матовое стекло</h3>
-          <p>Керамическое покрытие Gorilla® Armor не собирает отпечатки и не боится царапин.</p>
-        </article>
-        <article class="feature">
-          <span class="feature__num">02</span>
-          <h3>Тройная камера</h3>
-          <p>200 Мп сенсор с оптической стабилизацией и ночным режимом нового поколения.</p>
-        </article>
-        <article class="feature">
-          <span class="feature__num">03</span>
-          <h3>Титановая рамка</h3>
-          <p>Авиационный сплав: на 40% прочнее и заметно легче предыдущего поколения.</p>
-        </article>
-        <article class="feature">
-          <span class="feature__num">04</span>
-          <h3>Весь день на&nbsp;связи</h3>
-          <p>5000 мА·ч и быстрая зарядка 65 Вт — 60% за пятнадцать минут.</p>
-        </article>
-      </div>
-    </section>
-
-    <!-- ─────────────────────── Specs / CTA ─────────────────────── -->
+    <!-- ─────────────────── Specifications index ─────────────────── -->
     <section id="specs" class="specs">
-      <div class="specs__grid">
-        <div class="spec"><span class="spec__value">6.7"</span><span class="spec__label">AMOLED 144&nbsp;Гц</span></div>
-        <div class="spec"><span class="spec__value">200<small>Мп</small></span><span class="spec__label">Основная камера</span></div>
-        <div class="spec"><span class="spec__value">65<small>Вт</small></span><span class="spec__label">Быстрая зарядка</span></div>
-        <div class="spec"><span class="spec__value">IP68</span><span class="spec__label">Защита от воды</span></div>
-      </div>
+      <header class="specs__head">
+        <span class="specs__kicker">002 — Specifications</span>
+        <h2 class="specs__title">Every detail, on the record.</h2>
+      </header>
+
+      <dl class="spec-index">
+        <div class="spec-row"><dt>Display</dt><dd>6.7″ Super&nbsp;AMOLED</dd><dd class="spec-val">120<span>Hz</span></dd></div>
+        <div class="spec-row"><dt>Camera</dt><dd>Triple, optical&nbsp;IS</dd><dd class="spec-val">200<span>MP</span></dd></div>
+        <div class="spec-row"><dt>Charge</dt><dd>60% in fifteen&nbsp;minutes</dd><dd class="spec-val">65<span>W</span></dd></div>
+        <div class="spec-row"><dt>Protection</dt><dd>Dust &amp; water</dd><dd class="spec-val">IP68</dd></div>
+        <div class="spec-row"><dt>Finish</dt><dd>Matte ceramic, Obsidian</dd><dd class="spec-val">001</dd></div>
+      </dl>
     </section>
 
-    <section id="buy" class="cta">
-      <h2 class="cta__title">ECLIPSE. Ваш&nbsp;угол&nbsp;зрения.</h2>
-      <a class="btn btn--solid btn--lg" href="#buy">Заказать от&nbsp;79&nbsp;990&nbsp;₽</a>
+    <!-- ─────────────────── Closing statement ─────────────────── -->
+    <section id="cart" class="close">
+      <p class="close__eyebrow">003 — The drop</p>
+      <h2 class="close__title">Reserve <em>Obsidian.</em></h2>
+      <p class="close__meta">Archive Collection 001 · Edition of 500 · €&thinsp;1,290</p>
+      <button class="btn-fill btn-fill--lg" type="button">
+        <span>Add to Archive</span>
+      </button>
     </section>
   </main>
 
   <footer class="footer">
-    <span>© 2026 ECLIPSE</span>
-    <span class="footer__hint">Интерактивный hero — scrubbing одного видео курсором.</span>
+    <span class="footer__brand">prmpt<sup>®</sup></span>
+    <span class="footer__note">Archive 001 — Obsidian</span>
+    <span class="footer__year">© 2026</span>
   </footer>
 
+  <!-- ───────────────────────── Full-screen menu ───────────────────────── -->
+  <div class="menu" id="menu" hidden>
+    <nav class="menu__nav" aria-label="Menu">
+      <a class="menu__link" href="#top"><span class="menu__idx">01</span> Archive</a>
+      <a class="menu__link" href="#specs"><span class="menu__idx">02</span> Specifications</a>
+      <a class="menu__link" href="#cart"><span class="menu__idx">03</span> Cart <span class="menu__cart">(0)</span></a>
+      <a class="menu__link" href="#top"><span class="menu__idx">04</span> About</a>
+    </nav>
+    <div class="menu__foot">
+      <span>prmpt® — Collection 001</span>
+      <span>Obsidian · Edition of 500</span>
+    </div>
+  </div>
+
   <script src="script.js" defer></script>
+  <script src="ui.js" defer></script>
 </body>
 </html>
