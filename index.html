@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#ffffff" />
+  <title>ECLIPSE — совершенство под любым углом</title>
+  <meta name="description" content="Интерактивный флагман. Двигайте курсор и рассмотрите каждую грань в реальном времени." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Preload the scrub-optimised video so the very first pointer move is smooth -->
+  <link rel="preload" as="video" href="hero-scrub.mp4" type="video/mp4" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- ───────────────────────── Navbar ───────────────────────── -->
+  <header class="navbar">
+    <a class="brand" href="#top" aria-label="ECLIPSE — на главную">
+      <span class="brand__dot" aria-hidden="true"></span>
+      ECLIPSE
+    </a>
+    <nav class="nav-links" aria-label="Основная навигация">
+      <a href="#features">Возможности</a>
+      <a href="#design">Дизайн</a>
+      <a href="#specs">Характеристики</a>
+    </nav>
+    <a class="btn btn--pill" href="#buy">Купить</a>
+  </header>
+
+  <!-- ───────────────────────── Hero ───────────────────────── -->
+  <main id="top">
+    <section class="hero" aria-label="Интерактивный обзор устройства">
+      <!--
+        Одно видео. Оно НЕ воспроизводится само — его currentTime
+        жёстко привязан к позиции курсора (см. script.js).
+      -->
+      <video
+        id="hero-video"
+        class="hero__video"
+        playsinline
+        muted
+        preload="auto"
+        poster="poster.jpg"
+        aria-hidden="true"
+      >
+        <source src="hero-scrub.mp4" type="video/mp4" />
+        <!-- Фолбэк на исходный файл, если оптимизированный недоступен -->
+        <source src="hero.mp4" type="video/mp4" />
+      </video>
+
+      <!-- Текстовый слой поверх белого фона видео -->
+      <div class="hero__content">
+        <p class="hero__eyebrow">Новый флагман · 2026</p>
+        <h1 class="hero__title">
+          Совершенство<br />под любым углом
+        </h1>
+        <p class="hero__subtitle">
+          Одно устройство. Бесконечно граней. Двигайте курсор&nbsp;— и рассмотрите
+          каждую деталь так, будто оно у вас в руке.
+        </p>
+        <div class="hero__actions">
+          <a class="btn btn--solid" href="#buy">Заказать</a>
+          <a class="btn btn--ghost" href="#features">Смотреть обзор</a>
+        </div>
+      </div>
+
+      <!-- Подсказка «двигай курсор» -->
+      <div class="hero__hint" aria-hidden="true">
+        <span class="hero__hint-track">
+          <span class="hero__hint-thumb"></span>
+        </span>
+        <span class="hero__hint-label">Двигайте&nbsp;курсор</span>
+      </div>
+    </section>
+
+    <!-- ─────────────────────── Features ─────────────────────── -->
+    <section id="features" class="features">
+      <h2 class="section-title">Продумано до&nbsp;последнего&nbsp;пикселя</h2>
+      <div class="feature-grid">
+        <article class="feature">
+          <span class="feature__num">01</span>
+          <h3>Матовое стекло</h3>
+          <p>Керамическое покрытие Gorilla® Armor не собирает отпечатки и не боится царапин.</p>
+        </article>
+        <article class="feature">
+          <span class="feature__num">02</span>
+          <h3>Тройная камера</h3>
+          <p>200 Мп сенсор с оптической стабилизацией и ночным режимом нового поколения.</p>
+        </article>
+        <article class="feature">
+          <span class="feature__num">03</span>
+          <h3>Титановая рамка</h3>
+          <p>Авиационный сплав: на 40% прочнее и заметно легче предыдущего поколения.</p>
+        </article>
+        <article class="feature">
+          <span class="feature__num">04</span>
+          <h3>Весь день на&nbsp;связи</h3>
+          <p>5000 мА·ч и быстрая зарядка 65 Вт — 60% за пятнадцать минут.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ─────────────────────── Specs / CTA ─────────────────────── -->
+    <section id="specs" class="specs">
+      <div class="specs__grid">
+        <div class="spec"><span class="spec__value">6.7"</span><span class="spec__label">AMOLED 144&nbsp;Гц</span></div>
+        <div class="spec"><span class="spec__value">200<small>Мп</small></span><span class="spec__label">Основная камера</span></div>
+        <div class="spec"><span class="spec__value">65<small>Вт</small></span><span class="spec__label">Быстрая зарядка</span></div>
+        <div class="spec"><span class="spec__value">IP68</span><span class="spec__label">Защита от воды</span></div>
+      </div>
+    </section>
+
+    <section id="buy" class="cta">
+      <h2 class="cta__title">ECLIPSE. Ваш&nbsp;угол&nbsp;зрения.</h2>
+      <a class="btn btn--solid btn--lg" href="#buy">Заказать от&nbsp;79&nbsp;990&nbsp;₽</a>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>© 2026 ECLIPSE</span>
+    <span class="footer__hint">Интерактивный hero — scrubbing одного видео курсором.</span>
+  </footer>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
