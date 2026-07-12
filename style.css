@@ -93,6 +93,17 @@ button { font: inherit; color: inherit; }
 }
 [data-reveal].is-in { opacity: 1; transform: none; }
 
+/* Карточки преимуществ и строки характеристик «вылетают» снизу заметнее:
+   больше смещение + лёгкий подъём масштаба, с упругим ease. */
+.pillar[data-reveal],
+.spec-row[data-reveal] {
+  transform: translateY(64px) scale(0.98);
+  transition: opacity 0.85s var(--ease-out), transform 0.85s cubic-bezier(0.16, 1.02, 0.3, 1);
+  transition-delay: var(--reveal-delay, 0s);
+}
+.pillar[data-reveal].is-in,
+.spec-row[data-reveal].is-in { transform: translateY(0) scale(1); }
+
 /* ───────────────────────── Шапка ───────────────────────── */
 .topbar {
   position: fixed;
@@ -231,7 +242,9 @@ body.menu-open .topbar {
 
 .hero__content {
   position: absolute;
-  z-index: 5;
+  /* НЕ задаём z-index: иначе .hero__content создаст свой stacking context и
+     изолирует текст от видео — mix-blend-mode перестанет «видеть» телефон.
+     Контент и так рисуется поверх видео, т.к. идёт после него в DOM. */
   left: var(--gutter);
   top: 50%;
   transform: translateY(-50%);
@@ -241,16 +254,34 @@ body.menu-open .topbar {
 .hero__content a,
 .hero__content button { pointer-events: auto; }
 
+/* Инверсия в реальном времени: текст hero белый + mix-blend-mode: difference.
+   Над белым фоном пиксели становятся чёрными (|255-255|=0), над тёмным
+   телефоном — белыми (|~10-255|≈245). Так надпись всегда контрастна к тому,
+   что под ней, и «сама» перекрашивается, когда телефон вращается или секции
+   наезжают. Кнопки НЕ блендим — им нужны сплошные заливка/рамка. */
+.eyebrow,
+.hero__title,
+.hero__desc,
+.price-row {
+  color: #fff;
+  mix-blend-mode: difference;
+}
+/* Вторичные оттенки серого в difference выглядят грязно — заменяем градацию
+   на прозрачность (она под difference читается как более тусклый белый). */
+.hero__title-soft { color: #fff; opacity: 0.82; }
+.hero__desc { color: #fff; opacity: 0.9; }
+.price__meta { color: #fff; opacity: 0.6; }
+.eyebrow { color: #fff; opacity: 0.85; }
+
 .eyebrow {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: var(--ink-2);
   margin-bottom: 28px;
 }
 .eyebrow__dot {
   width: 6px; height: 6px; border-radius: 50%;
-  background: var(--ink);
+  background: #fff;   /* через difference: чёрный на белом, белый на телефоне */
   animation: pulse 2.6s var(--ease) infinite;
 }
 @keyframes pulse {
