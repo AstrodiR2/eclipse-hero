@@ -1,31 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#ffffff" />
-  <title>prmpt® — Archive Collection 001 · Obsidian</title>
-  <meta name="description" content="prmpt® Archive Collection 001 — Obsidian. A matte-black object in motion. Move to explore every facet." />
+  <title>ГРАНЬ — Обсидиан. Каждая грань в движении</title>
+  <meta name="description" content="Обсидиан от ГРАНЬ — матовый чёрный смартфон. Двигайте курсор и рассмотрите каждую грань в реальном времени." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;700;800&family=Onest:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="style.css" />
 </head>
 <body id="top">
-  <!-- ───────────────────────── Top bar ───────────────────────── -->
-  <header class="topbar">
-    <a class="wordmark" href="#top" aria-label="prmpt, home">prmpt<sup class="wordmark__r">®</sup></a>
+  <a class="skip-link" href="#hero-content">Перейти к содержанию</a>
 
-    <nav class="topnav" aria-label="Primary">
-      <a class="navlink topnav__inline" href="#specs">About</a>
-      <a class="navlink topnav__inline navlink--cart" href="#cart">
-        Cart <span class="cart-count" aria-label="items in cart">(0)</span>
+  <!-- ───────────────────────── Шапка ───────────────────────── -->
+  <header class="topbar" data-reveal>
+    <a class="wordmark" href="#top" aria-label="ГРАНЬ, на главную">
+      ГРАНЬ<span class="wordmark__mark" aria-hidden="true">®</span>
+    </a>
+
+    <nav class="topnav" aria-label="Основная навигация">
+      <a class="navlink" href="#product">Продукт</a>
+      <a class="navlink" href="#specs">Характеристики</a>
+      <a class="navlink navlink--cart" href="#order">
+        Корзина <span class="cart-count" aria-label="товаров в корзине">0</span>
       </a>
-      <button class="menu-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="menu">
+      <button class="menu-toggle" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="menu">
         <span class="menu-toggle__box" aria-hidden="true">
-          <span class="menu-toggle__line"></span>
           <span class="menu-toggle__line"></span>
           <span class="menu-toggle__line"></span>
         </span>
@@ -35,8 +39,8 @@
 
   <!-- ───────────────────────── Hero ───────────────────────── -->
   <main>
-    <section class="hero" aria-label="Obsidian — interactive object">
-      <!-- src подставляет script.js под устройство. Механика скраббинга не менялась. -->
+    <section class="hero" aria-label="Обсидиан — интерактивный обзор">
+      <!-- Видео: src подставляет script.js под устройство. Механику скраббинга не трогаем. -->
       <video
         id="hero-video"
         class="hero__video"
@@ -47,87 +51,122 @@
         aria-hidden="true"
       ></video>
 
-      <!-- Editorial content layer -->
-      <div class="hero__content">
-        <p class="eyebrow">
-          <span>Archive Collection</span>
-          <span class="eyebrow__rule" aria-hidden="true"></span>
-          <span class="eyebrow__idx">Nº 001</span>
+      <div class="hero__content" id="hero-content">
+        <p class="eyebrow" data-reveal>
+          <span class="eyebrow__dot" aria-hidden="true"></span>
+          Коллекция&nbsp;001
         </p>
 
-        <h1 class="drop-title">Obsidian,<br /><em>in&nbsp;motion.</em></h1>
+        <h1 class="hero__title" data-reveal>
+          Обсидиан<span class="hero__title-soft">каждая грань<br />в движении</span>
+        </h1>
 
-        <p class="drop-desc">
-          A study in matte black. One object, every facet —
-          rendered in real time as you move.
+        <p class="hero__desc" data-reveal>
+          Матовый чёрный, отлитый из света. Один объект — и бесконечность
+          ракурсов, которые оживают от движения курсора.
         </p>
 
-        <div class="price-row">
-          <span class="price">€&thinsp;1,290</span>
-          <span class="price__meta">Edition of 500</span>
+        <div class="price-row" data-reveal>
+          <span class="price">27&thinsp;990&nbsp;₽</span>
+          <span class="price__meta">Тираж&nbsp;500&nbsp;штук</span>
         </div>
 
-        <div class="hero__actions">
-          <button class="btn-fill" type="button" id="reserve">
-            <span>Add to Archive</span>
+        <div class="hero__actions" data-reveal>
+          <button class="btn btn--primary" type="button" data-add>
+            <span class="btn__label">В корзину</span>
+            <span class="btn__arrow" aria-hidden="true">→</span>
           </button>
-          <a class="btn-underline" href="#specs">
-            Specifications <span class="btn-underline__arrow" aria-hidden="true">→</span>
+          <a class="btn btn--text" href="#specs">
+            Характеристики <span class="btn__arrow" aria-hidden="true">→</span>
           </a>
         </div>
       </div>
 
-      <!-- Interaction cue (desktop) -->
+      <!-- Подсказка (десктоп) -->
       <div class="hero__hint" aria-hidden="true">
-        <span class="hero__hint-label">Move to rotate</span>
+        <span class="hero__hint-label">Двигайте, чтобы вращать</span>
         <span class="hero__hint-line"><span class="hero__hint-thumb"></span></span>
       </div>
     </section>
 
-    <!-- ─────────────────── Specifications index ─────────────────── -->
+    <!-- ───────────────────────── Продукт / преимущества ───────────────────────── -->
+    <section id="product" class="pillars">
+      <header class="section-head" data-reveal>
+        <span class="section-kicker">002 — Материал</span>
+        <h2 class="section-title">Продумано до&nbsp;последней грани.</h2>
+      </header>
+
+      <div class="pillar-grid">
+        <article class="pillar" data-reveal>
+          <span class="pillar__num">01</span>
+          <h3>Super&nbsp;AMOLED, 120&nbsp;Гц</h3>
+          <p>6,7″ экран с частотой до&nbsp;120&nbsp;Гц и глубоким чёрным, в&nbsp;который погружается корпус.</p>
+        </article>
+        <article class="pillar" data-reveal>
+          <span class="pillar__num">02</span>
+          <h3>Камера 50&nbsp;Мп</h3>
+          <p>Основной сенсор 50&nbsp;Мп с&nbsp;оптической стабилизацией, ультраширокий модуль и&nbsp;макро.</p>
+        </article>
+        <article class="pillar" data-reveal>
+          <span class="pillar__num">03</span>
+          <h3>Exynos&nbsp;1380</h3>
+          <p>Восьмиядерный 5-нм чип и&nbsp;графика Mali-G68 — плавность в&nbsp;каждом жесте.</p>
+        </article>
+        <article class="pillar" data-reveal>
+          <span class="pillar__num">04</span>
+          <h3>5000&nbsp;мА·ч</h3>
+          <p>Батарея на&nbsp;весь день и&nbsp;быстрая зарядка&nbsp;25&nbsp;Вт, чтобы не&nbsp;останавливаться.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ───────────────────────── Характеристики ───────────────────────── -->
     <section id="specs" class="specs">
-      <header class="specs__head">
-        <span class="specs__kicker">002 — Specifications</span>
-        <h2 class="specs__title">Every detail, on the record.</h2>
+      <header class="section-head" data-reveal>
+        <span class="section-kicker">003 — Характеристики</span>
+        <h2 class="section-title">Каждая деталь — на&nbsp;своём месте.</h2>
       </header>
 
       <dl class="spec-index">
-        <div class="spec-row"><dt>Display</dt><dd>6.7″ Super&nbsp;AMOLED</dd><dd class="spec-val">120<span>Hz</span></dd></div>
-        <div class="spec-row"><dt>Camera</dt><dd>Triple, optical&nbsp;IS</dd><dd class="spec-val">200<span>MP</span></dd></div>
-        <div class="spec-row"><dt>Charge</dt><dd>60% in fifteen&nbsp;minutes</dd><dd class="spec-val">65<span>W</span></dd></div>
-        <div class="spec-row"><dt>Protection</dt><dd>Dust &amp; water</dd><dd class="spec-val">IP68</dd></div>
-        <div class="spec-row"><dt>Finish</dt><dd>Matte ceramic, Obsidian</dd><dd class="spec-val">001</dd></div>
+        <div class="spec-row" data-reveal><dt>Экран</dt><dd>Super&nbsp;AMOLED, 1080×2340</dd><dd class="spec-val">120<span>Гц</span></dd></div>
+        <div class="spec-row" data-reveal><dt>Процессор</dt><dd>Exynos&nbsp;1380, 5&nbsp;нм</dd><dd class="spec-val">8<span>ядер</span></dd></div>
+        <div class="spec-row" data-reveal><dt>Память</dt><dd>ОЗУ&nbsp;8&nbsp;ГБ · UFS&nbsp;2.2</dd><dd class="spec-val">256<span>ГБ</span></dd></div>
+        <div class="spec-row" data-reveal><dt>Камера</dt><dd>Основная с&nbsp;оптической стабилизацией</dd><dd class="spec-val">50<span>Мп</span></dd></div>
+        <div class="spec-row" data-reveal><dt>Батарея</dt><dd>Зарядка&nbsp;25&nbsp;Вт</dd><dd class="spec-val">5000<span>мА·ч</span></dd></div>
+        <div class="spec-row" data-reveal><dt>Защита</dt><dd>Пыль, вода · Gorilla&nbsp;Glass&nbsp;Victus+</dd><dd class="spec-val">IP67</dd></div>
+        <div class="spec-row" data-reveal><dt>Отделка</dt><dd>Матовая керамика, Обсидиан</dd><dd class="spec-val">001</dd></div>
       </dl>
     </section>
 
-    <!-- ─────────────────── Closing statement ─────────────────── -->
-    <section id="cart" class="close">
-      <p class="close__eyebrow">003 — The drop</p>
-      <h2 class="close__title">Reserve <em>Obsidian.</em></h2>
-      <p class="close__meta">Archive Collection 001 · Edition of 500 · €&thinsp;1,290</p>
-      <button class="btn-fill btn-fill--lg" type="button">
-        <span>Add to Archive</span>
+    <!-- ───────────────────────── Заказ ───────────────────────── -->
+    <section id="order" class="order">
+      <p class="order__eyebrow" data-reveal>004 — Заказ</p>
+      <h2 class="order__title" data-reveal>Оформите <em>Обсидиан.</em></h2>
+      <p class="order__meta" data-reveal>Коллекция&nbsp;001 · тираж&nbsp;500&nbsp;штук · 27&thinsp;990&nbsp;₽</p>
+      <button class="btn btn--primary btn--lg" type="button" data-add data-reveal>
+        <span class="btn__label">В корзину</span>
+        <span class="btn__arrow" aria-hidden="true">→</span>
       </button>
     </section>
   </main>
 
   <footer class="footer">
-    <span class="footer__brand">prmpt<sup>®</sup></span>
-    <span class="footer__note">Archive 001 — Obsidian</span>
+    <span class="footer__brand">ГРАНЬ<span aria-hidden="true">®</span></span>
+    <span class="footer__note">Обсидиан — Коллекция&nbsp;001</span>
     <span class="footer__year">© 2026</span>
   </footer>
 
-  <!-- ───────────────────────── Full-screen menu ───────────────────────── -->
+  <!-- ───────────────────────── Полноэкранное меню ───────────────────────── -->
   <div class="menu" id="menu" hidden>
-    <nav class="menu__nav" aria-label="Menu">
-      <a class="menu__link" href="#top"><span class="menu__idx">01</span> Archive</a>
-      <a class="menu__link" href="#specs"><span class="menu__idx">02</span> Specifications</a>
-      <a class="menu__link" href="#cart"><span class="menu__idx">03</span> Cart <span class="menu__cart">(0)</span></a>
-      <a class="menu__link" href="#top"><span class="menu__idx">04</span> About</a>
+    <nav class="menu__nav" aria-label="Меню">
+      <a class="menu__link" href="#top"><span class="menu__idx">01</span> Главная</a>
+      <a class="menu__link" href="#product"><span class="menu__idx">02</span> Продукт</a>
+      <a class="menu__link" href="#specs"><span class="menu__idx">03</span> Характеристики</a>
+      <a class="menu__link" href="#order"><span class="menu__idx">04</span> Корзина <span class="menu__cart">0</span></a>
     </nav>
     <div class="menu__foot">
-      <span>prmpt® — Collection 001</span>
-      <span>Obsidian · Edition of 500</span>
+      <span>ГРАНЬ® — Коллекция&nbsp;001</span>
+      <span>Обсидиан · тираж&nbsp;500&nbsp;штук</span>
     </div>
   </div>
 

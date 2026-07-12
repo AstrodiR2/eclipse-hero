@@ -1,52 +1,95 @@
 /* ============================================================================
-   prmpt® — Archive Collection 001
-   Aesthetic: exaggerated editorial minimalism. Monochrome, oversized Playfair
-   statement type against JetBrains Mono technical chrome, generous negative
-   space. Pure-white page matches the video's white so the phone floats.
-   (Video scrubbing mechanics live in script.js and are untouched.)
+   ГРАНЬ® — Обсидиан. Коллекция 001.
+   Премиальная монохромная айдентика: Unbounded (кириллический display,
+   характер уровня Nothing) × Onest (чистый гротеск для текста) ×
+   JetBrains Mono (технические подписи). Много воздуха, чистый белый фон,
+   совпадающий с фоном видео — телефон «парит».
+   Механика скраббинга видео живёт в script.js и здесь не затрагивается.
    ========================================================================== */
 
 :root {
-  --ink:    #0a0a0b;   /* near-black — matches the matte phone */
-  --ink-2:  #56565c;   /* secondary text */
-  --ink-3:  #9a9aa1;   /* tertiary / meta */
-  --line:   #e7e7ea;   /* hairline rules */
-  --bg:     #ffffff;   /* MUST match the video background */
+  --ink:    #0b0b0d;   /* почти чёрный — в тон матовому телефону */
+  --ink-2:  #52525b;   /* вторичный текст */
+  --ink-3:  #a1a1a8;   /* третичный / подписи */
+  --line:   #ececef;   /* волосяные линии */
+  --line-2: #dcdce0;
+  --bg:     #ffffff;   /* ДОЛЖЕН совпадать с фоном видео */
+  --paper:  #f6f6f4;   /* тёплая подложка секций */
 
-  --serif: "Playfair Display", Georgia, "Times New Roman", serif;
-  --mono:  "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --display: "Unbounded", "Arial Black", sans-serif;
+  --sans:    "Onest", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --mono:    "JetBrains Mono", ui-monospace, Menlo, monospace;
 
-  --gutter: clamp(20px, 5vw, 72px);
+  --gutter: clamp(20px, 5vw, 80px);
   --ease:   cubic-bezier(0.22, 1, 0.36, 1);
-  --dur:    0.32s;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur:    0.4s;
+
+  /* вертикальный ритм */
+  --sp-section: clamp(90px, 15vh, 210px);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
 
 body {
-  font-family: var(--mono);
+  font-family: var(--sans);
   color: var(--ink);
   background: var(--bg);
+  font-size: 16px;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
 }
 
 a { color: inherit; text-decoration: none; }
-sup { font-size: 0.5em; vertical-align: super; }
+button { font: inherit; color: inherit; }
 
-/* Shared mono label treatment */
-.eyebrow, .navlink, .price__meta, .specs__kicker, .close__eyebrow,
-.hero__hint-label, .footer, .spec-row dt, .menu__idx {
+/* Общий стиль mono-подписей */
+.eyebrow, .navlink, .section-kicker, .price__meta, .order__eyebrow,
+.hero__hint-label, .footer, .spec-row dt, .menu__idx, .menu__foot, .order__meta {
   font-family: var(--mono);
   text-transform: uppercase;
-  letter-spacing: 0.18em;
-  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  font-size: 0.7rem;
+  font-weight: 400;
 }
 
-/* ───────────────────────── Top bar ───────────────────────── */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 8px;
+  z-index: 100;
+  background: var(--ink);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 4px;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+}
+.skip-link:focus { left: 16px; }
+
+:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Reveal при появлении в вьюпорте */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+  will-change: opacity, transform;
+}
+[data-reveal].is-in { opacity: 1; transform: none; }
+
+/* ───────────────────────── Шапка ───────────────────────── */
 .topbar {
   position: fixed;
   inset: 0 0 auto 0;
@@ -54,32 +97,37 @@ sup { font-size: 0.5em; vertical-align: super; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: clamp(16px, 2.4vw, 26px) var(--gutter);
-  mix-blend-mode: normal;
+  padding: clamp(16px, 2.4vw, 28px) var(--gutter);
 }
 .wordmark {
-  font-family: var(--mono);
-  font-weight: 700;
-  font-size: 1.15rem;
-  letter-spacing: -0.02em;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 1.1rem;
+  letter-spacing: 0.02em;
   line-height: 1;
+  display: inline-flex;
+  align-items: flex-start;
 }
-.wordmark__r {
+.wordmark__mark {
+  font-size: 0.5em;
   font-weight: 400;
-  margin-left: 1px;
+  margin-left: 2px;
   transition: transform var(--dur) var(--ease);
   display: inline-block;
 }
-.wordmark:hover .wordmark__r { transform: rotate(90deg); }
+.wordmark:hover .wordmark__mark { transform: rotate(90deg); }
 
-.topnav { display: flex; align-items: center; gap: clamp(20px, 3vw, 40px); }
+.topnav { display: flex; align-items: center; gap: clamp(18px, 2.6vw, 38px); }
 
-/* Animated-underline nav links */
+/* Навигация — подчёркивание выезжает слева */
 .navlink {
   position: relative;
-  padding-bottom: 3px;
-  color: var(--ink);
-  transition: letter-spacing var(--dur) var(--ease);
+  font-family: var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.72rem;
+  padding-bottom: 4px;
+  transition: opacity var(--dur) var(--ease);
 }
 .navlink::after {
   content: "";
@@ -91,39 +139,39 @@ sup { font-size: 0.5em; vertical-align: super; }
   transform-origin: left;
   transition: transform var(--dur) var(--ease);
 }
-.navlink:hover { letter-spacing: 0.22em; }
-.navlink:hover::after { transform: scaleX(1); }
-.cart-count { color: var(--ink-3); transition: color var(--dur) var(--ease); }
-.navlink--cart:hover .cart-count { color: var(--ink); }
-.cart-count.is-bumped { animation: cart-bump 0.4s var(--ease); }
-@keyframes cart-bump {
-  40% { transform: translateY(-3px); }
-  100% { transform: translateY(0); }
+.navlink:hover::after,
+.navlink:focus-visible::after { transform: scaleX(1); }
+.cart-count {
+  display: inline-block;
+  min-width: 1.4em;
+  text-align: center;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+.cart-count.is-bumped { animation: bump 0.42s var(--ease); }
+@keyframes bump {
+  35% { transform: translateY(-3px) scale(1.18); }
+  100% { transform: translateY(0) scale(1); }
 }
 
-/* Hamburger — 44×44 hit area, morphs to an X when open */
+/* Гамбургер — 44×44, две линии → крест */
 .menu-toggle {
+  display: none;            /* только на мобильных/планшетах */
   width: 44px; height: 44px;
-  display: grid; place-items: center;
+  place-items: center;
   background: none; border: 0; cursor: pointer;
-  color: var(--ink);
+  -webkit-tap-highlight-color: transparent;
 }
-.menu-toggle__box { position: relative; width: 24px; height: 14px; }
+.menu-toggle__box { position: relative; width: 22px; height: 12px; }
 .menu-toggle__line {
-  position: absolute; left: 0; width: 100%; height: 1.5px;
-  background: currentColor;
+  position: absolute; left: 0; width: 100%; height: 1.6px;
+  background: var(--ink);
   transition: transform var(--dur) var(--ease), opacity 0.2s var(--ease);
 }
-.menu-toggle__line:nth-child(1) { top: 0; }
-.menu-toggle__line:nth-child(2) { top: 50%; transform: translateY(-50%); transform-origin: center; }
-.menu-toggle__line:nth-child(3) { bottom: 0; }
-/* hover: outer lines draw inward a touch */
-.menu-toggle:hover .menu-toggle__line:nth-child(1) { transform: translateY(2px); }
-.menu-toggle:hover .menu-toggle__line:nth-child(3) { transform: translateY(-2px); }
-/* open: morph to X */
+.menu-toggle__line:nth-child(1) { top: 3px; }
+.menu-toggle__line:nth-child(2) { bottom: 3px; }
 .menu-toggle[aria-expanded="true"] .menu-toggle__line:nth-child(1) { top: 50%; transform: translateY(-50%) rotate(45deg); }
-.menu-toggle[aria-expanded="true"] .menu-toggle__line:nth-child(2) { opacity: 0; }
-.menu-toggle[aria-expanded="true"] .menu-toggle__line:nth-child(3) { bottom: 50%; transform: translateY(50%) rotate(-45deg); }
+.menu-toggle[aria-expanded="true"] .menu-toggle__line:nth-child(2) { bottom: 50%; transform: translateY(50%) rotate(-45deg); }
 
 /* ───────────────────────── Hero ───────────────────────── */
 .hero {
@@ -135,15 +183,14 @@ sup { font-size: 0.5em; vertical-align: super; }
   background: var(--bg);
 }
 
-/* Height-sized, centred video: the phone occupies ~50% of viewport height and
-   floats in white. The wide 16:9 frame overflows left/right into pure white,
-   which is invisible on the white page and clipped by .hero's overflow. */
+/* Видео по высоте и по центру: телефон занимает ~50% высоты и «парит».
+   Широкий кадр 16:9 выходит по бокам в чистый белый, невидимый на белом
+   фоне и обрезаемый overflow контейнера. */
 .hero__video {
   position: absolute;
-  top: 50%;
-  left: 50%;
+  top: 50%; left: 50%;
   transform: translate(-50%, -50%);
-  height: clamp(300px, 62vh, 640px);
+  height: clamp(300px, 64vh, 660px);
   width: auto;
   aspect-ratio: 16 / 9;
   object-fit: contain;
@@ -158,44 +205,55 @@ sup { font-size: 0.5em; vertical-align: super; }
   top: 50%;
   transform: translateY(-50%);
   max-width: min(30ch, 40vw);
-  pointer-events: none; /* cursor moves freely to rotate the phone */
+  pointer-events: none;      /* курсор свободно вращает телефон */
 }
 .hero__content a,
 .hero__content button { pointer-events: auto; }
 
 .eyebrow {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   color: var(--ink-2);
-  margin-bottom: 26px;
+  margin-bottom: 28px;
 }
-.eyebrow__rule { flex: 0 0 34px; height: 1px; background: var(--ink); opacity: 0.4; }
-.eyebrow__idx { color: var(--ink-3); }
-
-.drop-title {
-  font-family: var(--serif);
-  font-weight: 900;
-  /* Capped so the title (which overflows its box) always clears the
-     centred phone on the side-by-side desktop layout. */
-  font-size: clamp(2.6rem, 6vw, 5.5rem);
-  line-height: 0.94;
-  letter-spacing: -0.035em;
+.eyebrow__dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--ink);
+  animation: pulse 2.6s var(--ease) infinite;
 }
-.drop-title em {
-  font-weight: 400;
-  font-style: italic;
-  letter-spacing: -0.01em;
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.35; transform: scale(0.7); }
 }
 
-.drop-desc {
+.hero__title {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(2.7rem, 6vw, 5.4rem);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.hero__title-soft {
+  display: block;
+  margin-top: 0.35em;
+  font-family: var(--sans);
+  font-weight: 500;
+  font-size: 0.34em;
+  line-height: 1.15;
+  letter-spacing: 0;
+  color: var(--ink-2);
+  text-transform: none;
+}
+
+.hero__desc {
   margin-top: 26px;
-  font-family: var(--mono);
-  font-size: 0.86rem;
-  line-height: 1.7;
+  font-size: 1rem;
+  line-height: 1.65;
   color: var(--ink-2);
-  max-width: 40ch;
-  letter-spacing: 0.01em;
+  max-width: 34ch;
+  text-wrap: pretty;
 }
 
 .price-row {
@@ -203,73 +261,82 @@ sup { font-size: 0.5em; vertical-align: super; }
   display: flex;
   align-items: baseline;
   gap: 16px;
+  flex-wrap: wrap;
 }
 .price {
-  font-family: var(--serif);
+  font-family: var(--display);
   font-weight: 700;
-  font-size: 1.6rem;
-  letter-spacing: 0.01em;
-  font-variant-numeric: tabular-nums; /* stable price width */
+  font-size: 1.7rem;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
 }
 .price__meta { color: var(--ink-3); }
 
 .hero__actions {
-  margin-top: 36px;
+  margin-top: 38px;
   display: flex;
   align-items: center;
-  gap: 26px;
+  gap: 14px;
   flex-wrap: wrap;
 }
 
-/* Primary button — fill wipes up on hover, text inverts */
-.btn-fill {
+/* ── Кнопки ── */
+.btn {
   position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn__arrow { transition: transform var(--dur) var(--ease); }
+
+/* Первичная — заливка вытекает снизу, текст инвертируется */
+.btn--primary {
   overflow: hidden;
   border: 1px solid var(--ink);
   background: transparent;
   color: var(--ink);
-  font-family: var(--mono);
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  padding: 1.1em 2em;
-  cursor: pointer;
+  padding: 1.05em 1.9em;
 }
-.btn-fill span { position: relative; z-index: 1; transition: color var(--dur) var(--ease); }
-.btn-fill::before {
+.btn--primary .btn__label,
+.btn--primary .btn__arrow { position: relative; z-index: 1; transition: color var(--dur) var(--ease), transform var(--dur) var(--ease); }
+.btn--primary::before {
   content: "";
   position: absolute; inset: 0;
   background: var(--ink);
   transform: translateY(101%);
-  transition: transform 0.38s var(--ease);
+  transition: transform 0.42s var(--ease);
 }
-.btn-fill:hover::before,
-.btn-fill:focus-visible::before { transform: translateY(0); }
-.btn-fill:hover span,
-.btn-fill:focus-visible span { color: #fff; }
-.btn-fill--lg { padding: 1.25em 2.6em; font-size: 0.8rem; }
+.btn--primary:hover::before,
+.btn--primary:focus-visible::before { transform: translateY(0); }
+.btn--primary:hover .btn__label,
+.btn--primary:hover .btn__arrow,
+.btn--primary:focus-visible .btn__label,
+.btn--primary:focus-visible .btn__arrow { color: #fff; }
+.btn--primary:hover .btn__arrow { transform: translateX(4px); }
+.btn--primary:active { transform: scale(0.98); }
+.btn--lg { padding: 1.2em 2.4em; font-size: 0.8rem; }
 
-/* Secondary — underlined mono link with a nudging arrow */
-.btn-underline {
-  font-family: var(--mono);
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
+/* Текстовая — подчёркнутая mono-ссылка со стрелкой */
+.btn--text {
   border-bottom: 1px solid var(--ink);
-  padding-bottom: 3px;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+  padding-bottom: 4px;
 }
-.btn-underline__arrow { transition: transform var(--dur) var(--ease); }
-.btn-underline:hover .btn-underline__arrow { transform: translateX(5px); }
+.btn--text:hover .btn__arrow,
+.btn--text:focus-visible .btn__arrow { transform: translateX(5px); }
 
-/* Interaction cue */
+/* Подсказка */
 .hero__hint {
   position: absolute;
   z-index: 5;
   right: var(--gutter);
-  bottom: clamp(22px, 4vh, 46px);
+  bottom: clamp(22px, 4vh, 48px);
   display: flex;
   align-items: center;
   gap: 14px;
@@ -277,89 +344,113 @@ sup { font-size: 0.5em; vertical-align: super; }
   pointer-events: none;
 }
 .hero__hint-label { color: var(--ink-2); }
-.hero__hint-line {
-  position: relative;
-  width: 120px; height: 1px;
-  background: var(--line);
-}
+.hero__hint-line { position: relative; width: 116px; height: 1px; background: var(--line-2); }
 .hero__hint-thumb {
   position: absolute; top: 50%; left: 0;
   width: 7px; height: 7px; border-radius: 50%;
   background: var(--ink);
   transform: translate(-50%, -50%);
-  animation: hint-slide 3.6s var(--ease) infinite;
+  animation: slide 3.6s var(--ease) infinite;
 }
-@keyframes hint-slide {
+@keyframes slide {
   0%, 100% { left: 6%; }
   50%      { left: 94%; }
 }
 
-/* ───────────────────────── Specifications ───────────────────────── */
-.specs {
-  padding: clamp(90px, 15vh, 200px) var(--gutter);
-  border-top: 1px solid var(--line);
-}
-.specs__head { margin-bottom: clamp(40px, 7vh, 90px); }
-.specs__kicker { color: var(--ink-3); }
-.specs__title {
+/* ───────────────────────── Секции: общий заголовок ───────────────────────── */
+.section-head { margin-bottom: clamp(40px, 7vh, 88px); max-width: 22ch; }
+.section-kicker { color: var(--ink-3); }
+.section-title {
   margin-top: 20px;
-  font-family: var(--serif);
-  font-weight: 400;
-  font-size: clamp(2rem, 5vw, 4rem);
-  line-height: 1.02;
-  letter-spacing: -0.03em;
-  max-width: 16ch;
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: clamp(1.9rem, 4.4vw, 3.6rem);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
 }
 
+/* ───────────────────────── Продукт / преимущества ───────────────────────── */
+.pillars {
+  padding: var(--sp-section) var(--gutter);
+  border-top: 1px solid var(--line);
+}
+.pillar-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+.pillar {
+  background: var(--bg);
+  padding: clamp(28px, 3vw, 44px);
+  transition: background var(--dur) var(--ease);
+}
+.pillar:hover { background: var(--paper); }
+.pillar__num {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  color: var(--ink-3);
+}
+.pillar h3 {
+  margin: 18px 0 12px;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 1.15rem;
+  letter-spacing: -0.01em;
+}
+.pillar p { color: var(--ink-2); font-size: 0.94rem; line-height: 1.6; }
+
+/* ───────────────────────── Характеристики ───────────────────────── */
+.specs {
+  padding: var(--sp-section) var(--gutter);
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+}
 .spec-index { border-top: 1px solid var(--ink); }
 .spec-row {
   display: grid;
-  grid-template-columns: minmax(120px, 1fr) 2fr auto;
-  gap: 20px;
-  align-items: baseline;
+  grid-template-columns: minmax(120px, 0.8fr) 1.6fr auto;
+  gap: 24px;
+  align-items: center;
   padding: clamp(18px, 2.6vh, 30px) 0;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid var(--line-2);
   transition: padding-left var(--dur) var(--ease);
 }
-.spec-row:hover { padding-left: 12px; }
-.spec-row dt { color: var(--ink-3); align-self: center; }
-.spec-row dd { font-family: var(--serif); font-size: clamp(1.1rem, 2vw, 1.6rem); }
+.spec-row:hover { padding-left: 14px; }
+.spec-row dt { color: var(--ink-3); }
+.spec-row dd { font-family: var(--display); font-weight: 400; font-size: clamp(1rem, 1.9vw, 1.4rem); letter-spacing: -0.01em; }
 .spec-row .spec-val {
   font-family: var(--mono);
   font-weight: 500;
-  font-size: clamp(1.1rem, 2vw, 1.5rem);
-  letter-spacing: -0.01em;
+  font-size: clamp(1rem, 1.9vw, 1.35rem);
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
-.spec-row .spec-val span { font-size: 0.5em; color: var(--ink-3); margin-left: 3px; letter-spacing: 0.1em; }
+.spec-row .spec-val span { font-size: 0.5em; color: var(--ink-3); margin-left: 4px; letter-spacing: 0.06em; }
 
-/* ───────────────────────── Closing statement ───────────────────────── */
-.close {
-  padding: clamp(100px, 18vh, 240px) var(--gutter);
+/* ───────────────────────── Заказ ───────────────────────── */
+.order {
+  padding: clamp(110px, 20vh, 260px) var(--gutter);
   border-top: 1px solid var(--line);
   text-align: center;
 }
-.close__eyebrow { color: var(--ink-3); }
-.close__title {
+.order__eyebrow { color: var(--ink-3); }
+.order__title {
   margin: 22px 0 18px;
-  font-family: var(--serif);
-  font-weight: 900;
-  font-size: clamp(2.6rem, 8vw, 6.5rem);
-  line-height: 0.95;
-  letter-spacing: -0.035em;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(2.6rem, 8vw, 6rem);
+  line-height: 0.98;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
 }
-.close__title em { font-weight: 400; font-style: italic; }
-.close__meta {
-  font-family: var(--mono);
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  font-size: 0.72rem;
-  color: var(--ink-2);
-  margin-bottom: 44px;
-}
+.order__title em { font-weight: 400; font-style: normal; color: var(--ink-2); }
+.order__meta { color: var(--ink-2); margin-bottom: 44px; }
 
-/* ───────────────────────── Footer ───────────────────────── */
+/* ───────────────────────── Подвал ───────────────────────── */
 .footer {
   display: flex;
   align-items: center;
@@ -370,115 +461,109 @@ sup { font-size: 0.5em; vertical-align: super; }
   border-top: 1px solid var(--line);
   color: var(--ink-3);
 }
-.footer__brand { color: var(--ink); font-weight: 700; }
+.footer__brand { font-family: var(--display); color: var(--ink); font-weight: 700; letter-spacing: 0.02em; }
 
-/* ───────────────────────── Full-screen menu ───────────────────────── */
+/* ───────────────────────── Полноэкранное меню ───────────────────────── */
 .menu {
   position: fixed;
   inset: 0;
-  z-index: 30;
+  z-index: 45;
   background: var(--bg);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: var(--gutter);
+  padding: calc(var(--gutter) + 40px) var(--gutter) var(--gutter);
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.4s var(--ease), visibility 0.4s var(--ease);
+  transition: opacity var(--dur) var(--ease), visibility var(--dur) var(--ease);
 }
 .menu.is-open { opacity: 1; visibility: visible; }
-.menu__nav { display: flex; flex-direction: column; gap: clamp(8px, 1.6vh, 18px); }
+.menu__nav { display: flex; flex-direction: column; gap: clamp(6px, 1.4vh, 14px); }
 .menu__link {
-  font-family: var(--serif);
-  font-weight: 400;
-  font-size: clamp(2.4rem, 9vw, 5.5rem);
-  line-height: 1.04;
-  letter-spacing: -0.03em;
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: clamp(2.2rem, 10vw, 3.6rem);
+  line-height: 1.06;
+  letter-spacing: -0.02em;
   display: flex;
   align-items: baseline;
-  gap: 18px;
-  /* staggered reveal */
+  gap: 16px;
   opacity: 0;
-  transform: translateY(18px);
-  transition: opacity 0.5s var(--ease), transform 0.5s var(--ease);
+  transform: translateY(16px);
+  transition: opacity 0.5s var(--ease), transform 0.5s var(--ease), color 0.2s var(--ease);
 }
-.menu.is-open .menu__link { opacity: 1; transform: translateY(0); }
-.menu.is-open .menu__link:nth-child(1) { transition-delay: 0.10s; }
-.menu.is-open .menu__link:nth-child(2) { transition-delay: 0.16s; }
-.menu.is-open .menu__link:nth-child(3) { transition-delay: 0.22s; }
-.menu.is-open .menu__link:nth-child(4) { transition-delay: 0.28s; }
-.menu__link:hover { font-style: italic; }
+.menu.is-open .menu__link { opacity: 1; transform: none; }
+.menu.is-open .menu__link:nth-child(1) { transition-delay: 0.08s; }
+.menu.is-open .menu__link:nth-child(2) { transition-delay: 0.14s; }
+.menu.is-open .menu__link:nth-child(3) { transition-delay: 0.20s; }
+.menu.is-open .menu__link:nth-child(4) { transition-delay: 0.26s; }
+.menu__link:active { color: var(--ink-2); }
 .menu__idx {
   font-family: var(--mono);
   font-size: 0.8rem;
   letter-spacing: 0.1em;
   color: var(--ink-3);
   align-self: flex-start;
-  padding-top: 0.6em;
+  padding-top: 0.5em;
 }
-.menu__cart { font-family: var(--mono); font-size: 0.4em; color: var(--ink-3); align-self: center; }
+.menu__cart { font-family: var(--mono); font-size: 0.32em; color: var(--ink-3); align-self: center; }
 .menu__foot {
   position: absolute;
-  left: var(--gutter);
-  right: var(--gutter);
-  bottom: var(--gutter);
+  left: var(--gutter); right: var(--gutter);
+  bottom: calc(var(--gutter) + env(safe-area-inset-bottom, 0px));
   display: flex;
   justify-content: space-between;
-  gap: 16px;
+  gap: 12px;
   flex-wrap: wrap;
-  font-family: var(--mono);
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  font-size: 0.68rem;
   color: var(--ink-3);
 }
 body.menu-open { overflow: hidden; }
 
-/* ───────────────────────── Responsive ───────────────────────── */
+/* ───────────────────────── Адаптив ───────────────────────── */
 
-/* Stack early (≤1024): the phone is centred, so once the viewport narrows the
-   side copy would crowd it — move the copy below the phone instead. */
+/* Раскладка «текст под телефоном» уже с 1024px: телефон по центру,
+   боковой текст его бы теснил. */
 @media (max-width: 1024px) {
-  .hero__video { top: 40%; height: clamp(260px, 52vh, 460px); }
-
+  .hero__video { top: 40%; height: clamp(260px, 52vh, 470px); }
   .hero__content {
-    left: var(--gutter);
-    right: var(--gutter);
-    top: auto;
-    bottom: 7%;
+    left: var(--gutter); right: var(--gutter);
+    top: auto; bottom: 7%;
     transform: none;
     max-width: none;
   }
-  .drop-desc { max-width: 42ch; }
+  .hero__desc { max-width: 46ch; }
   .hero__hint { display: none; }
-
-  .spec-row { grid-template-columns: 1fr auto; }
-  .spec-row dd:not(.spec-val) { grid-column: 1 / -1; order: 3; color: var(--ink-2); font-size: 1rem; }
 }
 
-/* Collapse inline nav links into the menu on small screens. */
-@media (max-width: 600px) {
-  .topnav__inline { display: none; }
+/* Мобильная навигация: прячем ссылки, показываем гамбургер */
+@media (max-width: 720px) {
+  .navlink { display: none; }
+  .menu-toggle { display: grid; }
+  .spec-row { grid-template-columns: 1fr auto; column-gap: 16px; }
+  .spec-row dd:not(.spec-val) { grid-column: 1 / -1; order: 3; color: var(--ink-2); font-family: var(--sans); font-size: 0.95rem; }
 }
 
+/* Оптимизация под Galaxy A26 (6,7″, CSS-ширина ≈ 412px) */
 @media (max-width: 480px) {
   .hero { min-height: 580px; }
-  .hero__video { top: 38%; height: clamp(240px, 46vh, 400px); }
+  .hero__video { top: 37%; height: clamp(240px, 46vh, 400px); }
   .hero__content { bottom: 5%; }
-  .drop-title { font-size: clamp(2.8rem, 15vw, 4rem); }
-  .hero__actions { gap: 18px; }
-  .btn-fill { flex: 1 1 auto; text-align: center; }
+  .hero__title { font-size: clamp(2.6rem, 13vw, 3.6rem); }
+  .hero__actions { gap: 12px; }
+  .btn--primary { flex: 1 1 auto; justify-content: center; }
 }
 
-@media (max-height: 560px) {
-  .hero__video { height: clamp(220px, 74vh, 420px); }
+@media (max-height: 560px) and (max-width: 1024px) {
+  .hero__video { height: clamp(220px, 72vh, 420px); }
 }
 
-/* Respect reduced-motion: hold the neutral frame cue, drop looped/decorative motion.
-   (Scrubbing itself is user-driven and disabled in JS under reduced-motion.) */
+/* Уважаем prefers-reduced-motion: без циклической/декоративной анимации,
+   reveal-элементы сразу видимы. Скраббинг всё равно управляется пользователем
+   и отключается в script.js. */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .hero__hint-thumb { animation: none; left: 50%; }
+  [data-reveal] { opacity: 1; transform: none; transition: none; }
+  .hero__hint-thumb, .eyebrow__dot { animation: none; }
   .cart-count.is-bumped { animation: none; }
   *, *::before, *::after { transition-duration: 0.001ms !important; }
 }

@@ -1,28 +1,26 @@
 /* ============================================================================
-   prmpt® — UI chrome interactions (menu, cart).
-   Completely independent of the video-scrubbing logic in script.js.
+   ГРАНЬ® — интерактив UI-слоя (меню, корзина, reveal при скролле).
+   Полностью независим от логики скраббинга видео в script.js.
    ========================================================================== */
 
 const menuToggle = document.querySelector('.menu-toggle');
 const menu       = document.getElementById('menu');
 const body       = document.body;
 
-/* ── Full-screen menu ─────────────────────────────────────────────────────── */
+/* ── Полноэкранное меню ───────────────────────────────────────────────────── */
 function openMenu() {
   menu.hidden = false;
-  // next frame so the transition runs from the hidden state
   requestAnimationFrame(() => menu.classList.add('is-open'));
   menuToggle.setAttribute('aria-expanded', 'true');
-  menuToggle.setAttribute('aria-label', 'Close menu');
+  menuToggle.setAttribute('aria-label', 'Закрыть меню');
   body.classList.add('menu-open');
 }
 
 function closeMenu() {
   menu.classList.remove('is-open');
   menuToggle.setAttribute('aria-expanded', 'false');
-  menuToggle.setAttribute('aria-label', 'Open menu');
+  menuToggle.setAttribute('aria-label', 'Открыть меню');
   body.classList.remove('menu-open');
-  // hide after the fade so it's removed from the a11y tree
   const done = () => { menu.hidden = true; menu.removeEventListener('transitionend', done); };
   menu.addEventListener('transitionend', done);
 }
@@ -34,37 +32,48 @@ function toggleMenu() {
 
 if (menuToggle && menu) {
   menuToggle.addEventListener('click', toggleMenu);
-
-  // Close when a menu link is chosen…
-  menu.querySelectorAll('.menu__link').forEach((link) => {
-    link.addEventListener('click', closeMenu);
-  });
-
-  // …and on Escape.
+  menu.querySelectorAll('.menu__link').forEach((link) => link.addEventListener('click', closeMenu));
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && menuToggle.getAttribute('aria-expanded') === 'true') closeMenu();
   });
 }
 
-/* ── Cart micro-interaction ───────────────────────────────────────────────── */
-// "Add to Archive" bumps a shared cart counter — a small touch that shows the
-// chrome is alive without pulling in any commerce logic.
+/* ── Корзина ──────────────────────────────────────────────────────────────── */
+// «В корзину» увеличивает общий счётчик — маленький живой отклик без
+// какой-либо коммерческой логики.
 let cartItems = 0;
 
 function addToCart() {
   cartItems += 1;
   document.querySelectorAll('.cart-count, .menu__cart').forEach((el) => {
-    el.textContent = `(${cartItems})`;
+    el.textContent = String(cartItems);
   });
   const badge = document.querySelector('.cart-count');
   if (badge) {
     badge.classList.remove('is-bumped');
-    // reflow to restart the animation
-    void badge.offsetWidth;
+    void badge.offsetWidth; // рефлоу, чтобы перезапустить анимацию
     badge.classList.add('is-bumped');
   }
 }
 
-document.querySelectorAll('.btn-fill').forEach((btn) => {
-  btn.addEventListener('click', addToCart);
-});
+document.querySelectorAll('[data-add]').forEach((btn) => btn.addEventListener('click', addToCart));
+
+/* ── Reveal при появлении в вьюпорте ──────────────────────────────────────── */
+const revealEls = document.querySelectorAll('[data-reveal]');
+const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+if (prefersReduced || !('IntersectionObserver' in window)) {
+  // Без анимации — сразу показываем всё.
+  revealEls.forEach((el) => el.classList.add('is-in'));
+} else {
+  const io = new IntersectionObserver((entries, obs) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-in');
+        obs.unobserve(entry.target); // один раз
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+
+  revealEls.forEach((el) => io.observe(el));
+}
