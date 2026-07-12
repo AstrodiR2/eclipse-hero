@@ -58,13 +58,27 @@ function addToCart() {
 
 document.querySelectorAll('[data-add]').forEach((btn) => btn.addEventListener('click', addToCart));
 
-/* ── Reveal при появлении в вьюпорте ──────────────────────────────────────── */
+/* ── Reveal при появлении в вьюпорте (мягко, каскадом) ────────────────────── */
 const revealEls = document.querySelectorAll('[data-reveal]');
 const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+// Задаём каждой карточке задержку по её порядку среди «соседей» с [data-reveal]
+// в том же контейнере — так группа (сетка преимуществ, список характеристик,
+// текст hero) появляется каскадом, а не резко и разом.
+const STEP = 90;   // мс между соседними элементами
+const CAP  = 6;    // максимум шагов, чтобы длинные списки не тянулись слишком долго
+revealEls.forEach((el) => {
+  const parent = el.parentElement;
+  if (!parent) return;
+  const group = Array.from(parent.children).filter((c) => c.hasAttribute('data-reveal'));
+  const idx = group.indexOf(el);
+  const delay = Math.min(idx, CAP) * STEP;
+  el.style.setProperty('--reveal-delay', `${delay}ms`);
+});
+
 if (prefersReduced || !('IntersectionObserver' in window)) {
   // Без анимации — сразу показываем всё.
-  revealEls.forEach((el) => el.classList.add('is-in'));
+  revealEls.forEach((el) => { el.style.setProperty('--reveal-delay', '0ms'); el.classList.add('is-in'); });
 } else {
   const io = new IntersectionObserver((entries, obs) => {
     entries.forEach((entry) => {

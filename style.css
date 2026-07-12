@@ -44,7 +44,9 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  overflow-x: hidden;
+  /* clip (не hidden): не создаёт scroll-контейнер, поэтому position:sticky
+     у hero продолжает работать. */
+  overflow-x: clip;
 }
 
 a { color: inherit; text-decoration: none; }
@@ -80,11 +82,13 @@ button { font: inherit; color: inherit; }
   border-radius: 2px;
 }
 
-/* Reveal при появлении в вьюпорте */
+/* Reveal при появлении в вьюпорте — мягкое, с каскадом (stagger).
+   Задержку внутри группы задаёт ui.js через --reveal-delay. */
 [data-reveal] {
   opacity: 0;
-  transform: translateY(22px);
-  transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+  transform: translateY(30px);
+  transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out);
+  transition-delay: var(--reveal-delay, 0s);
   will-change: opacity, transform;
 }
 [data-reveal].is-in { opacity: 1; transform: none; }
@@ -93,11 +97,22 @@ button { font: inherit; color: inherit; }
 .topbar {
   position: fixed;
   inset: 0 0 auto 0;
-  z-index: 40;
+  z-index: 50;                 /* выше меню, чтобы крест гамбургера кликался */
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: clamp(16px, 2.4vw, 28px) var(--gutter);
+  /* Стеклянное меню сверху */
+  background: rgba(255, 255, 255, 0.62);
+  backdrop-filter: saturate(180%) blur(18px);
+  -webkit-backdrop-filter: saturate(180%) blur(18px);
+  border-bottom: 1px solid rgba(11, 11, 13, 0.06);
+  transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+/* Пока меню открыто — шапка сливается с белым полотном меню. */
+body.menu-open .topbar {
+  background: rgba(255, 255, 255, 0.9);
+  border-bottom-color: transparent;
 }
 .wordmark {
   font-family: var(--display);
@@ -174,14 +189,30 @@ button { font: inherit; color: inherit; }
 .menu-toggle[aria-expanded="true"] .menu-toggle__line:nth-child(2) { bottom: 50%; transform: translateY(50%) rotate(-45deg); }
 
 /* ───────────────────────── Hero ───────────────────────── */
+/* Sticky: телефон «прилипает» к верху и остаётся на месте, пока следующие
+   секции (непрозрачные, с большим z-index) наезжают на него сверху. */
 .hero {
-  position: relative;
+  position: sticky;
+  top: 0;
+  z-index: 1;
   height: 100svh;
   min-height: 640px;
   width: 100%;
   overflow: hidden;
   background: var(--bg);
 }
+
+/* Секции после hero едут поверх закреплённого видео.
+   Непрозрачный фон обязателен, иначе телефон будет просвечивать. */
+.pillars,
+.specs,
+.order,
+.footer {
+  position: relative;
+  z-index: 2;
+  background: var(--bg);
+}
+.specs { background: var(--paper); }        /* сохранить тёплую подложку */
 
 /* Видео по высоте и по центру: телефон занимает ~50% высоты и «парит».
    Широкий кадр 16:9 выходит по бокам в чистый белый, невидимый на белом
