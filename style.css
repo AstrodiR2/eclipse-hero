@@ -103,16 +103,22 @@ a { color: inherit; text-decoration: none; }
   background: var(--bg);
 }
 
-/* The video is full-bleed. Because the page background matches the
-   video's white, any cover-cropping is invisible — the phone just
-   stays centred and "floats" on the page. */
+/* The video is NOT full-bleed. We size it by height so the phone occupies
+   ~45–55% of the viewport height (measured: the phone is ~0.82–0.90 of the
+   frame height). Its aspect ratio is kept, so the wide 16:9 frame overflows
+   left/right — but that overflow is pure white and identical to the page
+   background, so it's invisible and `.hero { overflow:hidden }` clips it.
+   The phone therefore appears to "float" centred in white, well clear of
+   the surrounding UI text. */
 .hero__video {
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 46%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: clamp(300px, 62vh, 640px);   /* controls the phone's visual size */
+  width: auto;
+  aspect-ratio: 16 / 9;                 /* keep proportions, never stretch */
+  object-fit: contain;
   pointer-events: none;   /* pointer tracking is on the whole hero */
   user-select: none;
 }
@@ -295,25 +301,39 @@ a { color: inherit; text-decoration: none; }
 /* ───────────────────────── Responsive ───────────────────────── */
 @media (max-width: 820px) {
   .nav-links { display: none; }
-  .hero__video { object-position: center 40%; }
+
+  /* Lift the phone into the upper area and shrink it a touch, so the copy
+     block below never collides with it. */
+  .hero__video {
+    top: 40%;
+    height: clamp(260px, 52vh, 460px);
+  }
+
   .hero__content {
     left: var(--page-x);
     right: var(--page-x);
     top: auto;
-    bottom: 20%;
+    bottom: 6%;
     transform: none;
     max-width: none;
     text-align: left;
   }
   .hero__subtitle { max-width: 40ch; }
-  .hero__hint { bottom: 16px; }
-  .hero__hint-track { width: 120px; }
+
+  /* The "move cursor" cue is desktop-only; touch users discover it by swiping. */
+  .hero__hint { display: none; }
 }
 
 @media (max-width: 480px) {
   .hero { min-height: 560px; }
-  .hero__content { bottom: 16%; }
+  .hero__video { top: 38%; height: clamp(240px, 46vh, 400px); }
+  .hero__content { bottom: 5%; }
   .hero__actions .btn { flex: 1 1 auto; }
+}
+
+/* Short/landscape viewports: keep the phone from eating the whole height. */
+@media (max-height: 560px) {
+  .hero__video { height: clamp(220px, 74vh, 420px); }
 }
 
 /* Respect users who prefer reduced motion: hold the neutral frame,

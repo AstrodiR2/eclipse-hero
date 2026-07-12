@@ -10,6 +10,11 @@
      0.00s → 1.95s   телефон смотрит влево  → поворачивается к центру
      1.95s → 2.22s   нейтральная зона (смотрит прямо)
      2.22s → 5.00s   телефон поворачивается из центра вправо
+
+   Плавность скраббинга на мобильных обеспечивают три вещи:
+     1) отдельная лёгкая версия видео (720p, all-intra) для слабых декодеров;
+     2) троттлинг seek-ов — не шлём новый currentTime, пока идёт предыдущий seek;
+     3) активация интерактива только после буферизации (readyState ≥ 3).
    ========================================================================== */
 
 // ── Опорные точки таймлайна (в секундах) ──────────────────────────────────
@@ -19,16 +24,30 @@ const T_CENTER_RIGHT = 2.22;   // центр со стороны правой п
 const T_RIGHT_EDGE   = 5.00;   // правый край экрана
 const T_NEUTRAL      = (T_CENTER_LEFT + T_CENTER_RIGHT) / 2; // ≈ 2.085s
 
+// ── Определяем устройство ───────────────────────────────────────────────────
+// Мобильным считаем узкий экран ИЛИ «грубый» указатель (палец).
+const isMobile = window.matchMedia('(max-width: 820px), (pointer: coarse)').matches;
+
+// ── Источники видео ─────────────────────────────────────────────────────────
+// Десктоп — 1080p all-intra; мобильные — лёгкая 720p all-intra версия,
+// которую слабый аппаратный декодер перематывает без рывков.
+const SRC_DESKTOP  = 'hero-scrub.mp4';
+const SRC_MOBILE   = 'hero-scrub-mobile.mp4';
+const SRC_FALLBACK = 'hero.mp4';
+
 // ── Настройки ощущения ─────────────────────────────────────────────────────
-const DEAD_ZONE = 50;   // ±px от центра: держим нейтраль, чтобы не дёргалось на стыке
-const LERP      = 0.1;  // коэффициент инерции currentTime → targetTime
-const EPSILON   = 0.0008; // ниже этого порога не трогаем currentTime (экономим seek)
+const DEAD_ZONE    = 50;                 // ±px от центра: держим нейтраль (без дёрганья на стыке)
+const LERP         = isMobile ? 0.08 : 0.1; // мягче инерция на мобильных → реже фактические seek-и
+const EPSILON      = 0.0008;             // ниже этого порога не трогаем currentTime (экономим seek)
+const SEEK_TIMEOUT = 300;                // мс: если seek «завис», всё же разрешаем следующий
 
 // ── Состояние ───────────────────────────────────────────────────────────────
 const state = {
   pointerX: window.innerWidth / 2, // последняя X-координата указателя
   active: false,                    // курсор/палец находится над hero
   duration: T_RIGHT_EDGE,           // реальная длительность (уточним из метаданных)
+  seekStartedAt: 0,                 // время последнего выданного seek (performance.now)
+  running: false,                   // rAF-цикл уже запущен?
 };
 
 const video = document.getElementById('hero-video');
@@ -71,6 +90,15 @@ function getTargetTime(x) {
  * инерцией (lerp) подтягивает к нему video.currentTime. Никаких play()/pause().
  */
 function animateVideo() {
+  // Троттлинг: если декодер ещё обрабатывает предыдущий seek — не шлём новый,
+  // иначе на мобильных запросы копятся в очередь и видео «не поспевает за пальцем».
+  // Страховка по таймауту — на случай потерянного события 'seeked'.
+  const busy = video.seeking && (performance.now() - state.seekStartedAt) < SEEK_TIMEOUT;
+  if (busy) {
+    requestAnimationFrame(animateVideo);
+    return;
+  }
+
   // Активны — считаем цель по курсору (getTargetTime уже учитывает dead zone);
   // не активны (курсор ушёл / палец отпущен) — плавно возвращаемся в нейтраль.
   const target = state.active ? getTargetTime(state.pointerX) : T_NEUTRAL;
@@ -81,9 +109,9 @@ function animateVideo() {
   // Обновляем только при заметной разнице — меньше лишних seek-ов, ровно 60 FPS.
   if (Math.abs(delta) > EPSILON) {
     let next = current + delta * LERP;               // инерционное сближение
-    // Держим значение в допустимых пределах видео.
-    next = Math.max(0, Math.min(next, state.duration));
+    next = Math.max(0, Math.min(next, state.duration)); // держим в пределах видео
     video.currentTime = next;
+    state.seekStartedAt = performance.now();         // отметили момент выдачи seek
   }
 
   requestAnimationFrame(animateVideo);
@@ -137,18 +165,13 @@ function primeVideo() {
 }
 
 /**
- * init() — стартуем, когда известны метаданные (длительность и кадр доступны).
+ * startScrubbing() — включаем интерактив. Вызывается только когда видео
+ * достаточно забуферизовано (readyState ≥ 3), чтобы seek не попадал в
+ * незагруженные участки и не подвисал.
  */
-function init() {
-  // Уточняем реальную длительность (актуально, если исходник чуть длиннее 5.00s).
-  if (Number.isFinite(video.duration) && video.duration > 0) {
-    state.duration = video.duration;
-  }
-
-  // Ставим телефон «прямо» на старте.
-  try { video.currentTime = T_NEUTRAL; } catch (_) { /* до готовности — не критично */ }
-
-  if (reduceMotion) return; // держим статичный нейтральный кадр, скраббинг не запускаем
+function startScrubbing() {
+  if (state.running || reduceMotion) return;
+  state.running = true;
 
   // ── Слушатели. passive: true — не блокируем скролл, без layout thrashing. ──
   hero.addEventListener('pointermove', handlePointerMove, { passive: true });
@@ -169,9 +192,47 @@ function init() {
   requestAnimationFrame(animateVideo);
 }
 
-// Метаданные могут уже быть готовы (кэш) — не пропускаем этот случай.
-if (video.readyState >= 1 /* HAVE_METADATA */) {
-  init();
-} else {
-  video.addEventListener('loadedmetadata', init, { once: true });
+/**
+ * onMetadata() — известны длительность и первый кадр: ставим телефон «прямо».
+ */
+function onMetadata() {
+  if (Number.isFinite(video.duration) && video.duration > 0) {
+    state.duration = video.duration;
+  }
+  try { video.currentTime = T_NEUTRAL; } catch (_) { /* до готовности — не критично */ }
 }
+
+/**
+ * whenReady(readyLevel, fn) — вызвать fn, когда video.readyState достигнет
+ * нужного уровня (учитывая, что событие могло уже произойти из кэша).
+ */
+function whenReady(readyLevel, eventName, fn) {
+  if (video.readyState >= readyLevel) fn();
+  else video.addEventListener(eventName, fn, { once: true });
+}
+
+/**
+ * init() — выбираем источник под устройство, грузим и по готовности стартуем.
+ */
+function init() {
+  // Подбираем источник под устройство ДО загрузки (media-атрибут на <source>
+  // современные браузеры для video игнорируют — поэтому выбираем в JS).
+  video.src = isMobile ? SRC_MOBILE : SRC_DESKTOP;
+
+  // Фолбэк на исходный файл, если оптимизированный не загрузился.
+  video.addEventListener('error', () => {
+    if (video.src.indexOf(SRC_FALLBACK) === -1) {
+      video.src = SRC_FALLBACK;
+      video.load();
+    }
+  }, { once: true });
+
+  whenReady(1 /* HAVE_METADATA */, 'loadedmetadata', onMetadata);
+  // Интерактив включаем только после HAVE_FUTURE_DATA — так seek идёт по
+  // уже буферизованным данным и не вызывает подвисаний.
+  whenReady(3 /* HAVE_FUTURE_DATA */, 'canplay', startScrubbing);
+
+  video.load(); // применяем выбранный src
+}
+
+init();
